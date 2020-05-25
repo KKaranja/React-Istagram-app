@@ -39,22 +39,12 @@ router.post("/signin", (req, res) => {
     if (!email || !password) {
         return res.status(422).json({ error: "Please add email or password!" });
     }
-    User.findOne({ email: email }).then(savedUser => {
+    user.findOne({ email: email }).then(savedUser => {
         if (!savedUser) {
-            return res.status(422).json({ error: "Invalid email or password!" });
+            return res
+                .status(422)
+                .json({ error: "That email is not registered, please signup!" });
         }
-        bcrypt
-            .compare(password, savedUser.password)
-            .then(doMatch => {
-                if (doMatch) {
-                    res.json({ message: "successfully signed in!" });
-                } else {
-                    return res.status(422).json({ error: "Invalid email or password!" });
-                }
-            })
-            .catch(err => {
-                console.log(err);
-            });
     });
 });
 

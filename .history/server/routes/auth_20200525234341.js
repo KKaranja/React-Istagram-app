@@ -17,9 +17,15 @@ router.post("/signup", (req, res) => {
                     .status(422)
                     .json({ error: "User already exist with that email!" });
             }
-            bcrypt.hash(password, 12).then(hashedpassword => {
-                const user = new User({ email, name, password: hashedpassword });
-                user
+            bcrypt.hash(password, 20)
+                .then(hashedpassword = > {
+
+                    const user = new User({
+                        email,
+                        name,
+                        password: hashedpassword,
+                    });
+                    user
                     .save()
                     .then(user => {
                         res.json({ message: "saved successfully" });
@@ -27,35 +33,11 @@ router.post("/signup", (req, res) => {
                     .catch(err => {
                         console.log(err);
                     });
-            });
+                })
         })
         .catch(err => {
             console.log(err);
         });
-});
-
-router.post("/signin", (req, res) => {
-    const { email, password } = req.body;
-    if (!email || !password) {
-        return res.status(422).json({ error: "Please add email or password!" });
-    }
-    User.findOne({ email: email }).then(savedUser => {
-        if (!savedUser) {
-            return res.status(422).json({ error: "Invalid email or password!" });
-        }
-        bcrypt
-            .compare(password, savedUser.password)
-            .then(doMatch => {
-                if (doMatch) {
-                    res.json({ message: "successfully signed in!" });
-                } else {
-                    return res.status(422).json({ error: "Invalid email or password!" });
-                }
-            })
-            .catch(err => {
-                console.log(err);
-            });
-    });
 });
 
 module.exports = router;
